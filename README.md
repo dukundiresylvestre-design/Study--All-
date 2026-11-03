@@ -1,2 +1,2 @@
 # Study--All-
-Study -All learning for global students 
+Study All- learning platform for all global students 
