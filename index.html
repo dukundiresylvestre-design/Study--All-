@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#123c73">
+<title>Study All — Learn Anything</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--navy:#123c73;--blue:#2463eb;--gold:#ffca55;--bg:#f3f6fb;--ink:#172338;--muted:#65748b;--card:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink)}
+header{background:linear-gradient(135deg,#123c73,#2463eb);color:white;padding:25px 18px 28px;border-radius:0 0 26px 26px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:15px;background:#fff;color:var(--navy);display:grid;place-items:center;font-weight:900;font-size:20px}
+h1{font-size:24px;margin:0}header p{margin:5px 0 0;color:#e4ecff}.search{margin-top:20px;width:100%;padding:14px 16px;border:0;border-radius:14px;font-size:15px}
+main{padding:18px;max-width:850px;margin:auto}.welcome{margin:4px 0 16px}.welcome h2{margin:0 0 5px;font-size:21px}.muted{color:var(--muted);font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.stat,.tile,.panel{background:var(--card);border-radius:17px;padding:15px;box-shadow:0 4px 16px #152b4d0b}.stat strong{display:block;font-size:20px;color:var(--navy)}.stat span{font-size:12px;color:var(--muted)}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:24px 0 12px}.section-title h3{margin:0;font-size:18px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.tile{cursor:pointer;border:1px solid #e8edf5;min-height:118px;text-align:left;color:var(--ink);font:inherit}.tile:active{transform:scale(.99)}.emoji{font-size:28px}.tile h4{margin:8px 0 3px;font-size:15px}.tile p{margin:0;color:var(--muted);font-size:12px}
+button{cursor:pointer}.primary{background:var(--blue);color:white;border:0;border-radius:12px;padding:12px 15px;font-weight:700}.secondary{background:#eaf0ff;color:var(--navy);border:0;border-radius:12px;padding:10px 13px;font-weight:650}
+.bottom{position:sticky;bottom:0;background:#ffffffed;backdrop-filter:blur(8px);display:flex;justify-content:space-around;padding:10px 4px calc(10px + env(safe-area-inset-bottom));border-top:1px solid #e7ecf4}
+.bottom button{border:0;background:transparent;color:#53637a;font-size:12px;padding:5px}.bottom button b{display:block;font-size:19px;margin-bottom:2px}
+.panel{margin:14px 0}.hidden{display:none}.choice{display:block;width:100%;text-align:left;margin:9px 0;padding:13px;border:1px solid #dbe4f2;border-radius:12px;background:white;color:var(--ink)}.choice.correct{border-color:#18864b;background:#e9f8ef}.choice.wrong{border-color:#d94747;background:#fff0f0}
+input,select,textarea{font:inherit;padding:12px;border:1px solid #d7dfec;border-radius:11px;width:100%;margin:7px 0 12px;background:white}
+footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}
+@media(min-width:650px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">SA</div><div><h1>Study All</h1><p>Learn today. Grow tomorrow.</p></div></div>
+ <input class="search" id="search" placeholder="Search subjects, languages, skills…" aria-label="Search lessons">
+</header>
+<main>
+ <section id="home">
+  <div class="welcome"><h2>Welcome to your learning space 🌍</h2><div class="muted">Explore subjects, practise skills, and track your progress.</div></div>
+  <div class="stats"><div class="stat"><strong id="lessonCount">8</strong><span>Learning areas</span></div><div class="stat"><strong id="quizScore">0</strong><span>Quiz points</span></div><div class="stat"><strong id="doneCount">0</strong><span>Lessons opened</span></div></div>
+  <div class="section-title"><h3>Explore learning areas</h3><span class="muted">Study All</span></div>
+  <div class="grid" id="subjectGrid"></div>
+  <div class="section-title"><h3>Quick practice</h3></div>
+  <div class="panel"><h3>🧠 Daily knowledge check</h3><p class="muted">Answer a short question and build your confidence.</p><button class="primary" onclick="startQuiz()">Start practice</button></div>
+ </section>
+ <section id="lessonPage" class="hidden">
+  <button class="secondary" onclick="goHome()">← Back to subjects</button>
+  <div class="panel"><div class="emoji" id="lessonEmoji">📘</div><h2 id="lessonTitle">Lesson</h2><p class="muted" id="lessonIntro"></p><div id="lessonBody"></div></div>
+ </section>
+ <section id="quizPage" class="hidden">
+  <button class="secondary" onclick="goHome()">← Home</button>
+  <div class="panel"><h2>🧠 Practice quiz</h2><p id="questionText"></p><div id="choices"></div><p id="feedback" aria-live="polite"></p><button class="primary hidden" id="nextQuestion" onclick="nextQuiz()">Next question</button></div>
+ </section>
+ <section id="profilePage" class="hidden">
+  <button class="secondary" onclick="goHome()">← Home</button>
+  <div class="panel"><h2>👤 Learner profile</h2><p class="muted">Your progress is saved on this device.</p><label for="learnerName">Your name</label><input id="learnerName" placeholder="Enter your name"><button class="primary" onclick="saveProfile()">Save profile</button><p id="profileMessage" class="muted"></p><hr><p>Lessons opened: <b id="profileDone">0</b></p><p>Quiz points: <b id="profilePoints">0</b></p></div>
+ </section>
+ <section id="aboutPage" class="hidden">
+  <button class="secondary" onclick="goHome()">← Home</button>
+  <div class="panel"><h2>About Study All</h2><p>Study All is a learning app concept designed to make study resources easier to explore on a phone.</p><p class="muted">This starter version includes sample learning notes and a practice quiz. Online accounts, cloud syncing, live AI tutoring, payments, and publishing are not connected yet.</p><p>Contact / support: <span id="supportText">Add your official support email before publishing.</span></p></div>
+ </section>
+</main>
+<nav class="bottom"><button onclick="goHome()"><b>⌂</b>Home</button><button onclick="showQuiz()"><b>✓</b>Practice</button><button onclick="showProfile()"><b>♙</b>Profile</button><button onclick="showAbout()"><b>ⓘ</b>About</button></nav>
+<footer>Study All · Independent learning project</footer>
+<script>
+const subjects=[
+{id:'english',icon:'🇬🇧',name:'English',desc:'Vocabulary and everyday speaking',intro:'Build practical English one step at a time.',body:['Start with useful greetings: “Hello”, “How are you?” and “Nice to meet you.”','Practise speaking aloud. Make a short sentence with each new word.','Example: “I am learning English because I want to communicate with more people.”']},
+{id:'french',icon:'🇫🇷',name:'French',desc:'Grammar and communication',intro:'Improve your French through small daily steps.',body:['Greeting: “Bonjour, comment allez-vous ?”','Introduce yourself: “Je m’appelle … et j’apprends le français.”','Write three sentences about your day and read them aloud.']},
+{id:'kirundi',icon:'🇧🇮',name:'Kirundi',desc:'Language and writing skills',intro:'Develop reading, writing, and communication.',body:['Andika interuro zitatu zidondora umusi wawe.','Soma wanditse buhoro, urabe ko ubutumwa butomoye.','Imyimenyerezo: sobanura ijambo rimwe ukoresheje akarorero.']},
+{id:'kiswahili',icon:'🌍',name:'Kiswahili',desc:'Useful words and phrases',intro:'Learn everyday Kiswahili.',body:['Greeting: “Habari yako?” — How are you?','“Asante” means “Thank you”.','Practice: “Ninajifunza Kiswahili kila siku.”']},
+{id:'math',icon:'➗',name:'Mathematics',desc:'Numbers and problem-solving',intro:'Strengthen your logic and calculation skills.',body:['Example: 12 × 8 = 96.','To find 20% of 150, calculate 0.20 × 150 = 30.','Try to write each step when solving a problem.']},
+{id:'science',icon:'🔬',name:'Science',desc:'Explore the natural world',intro:'Ask questions and look for evidence.',body:['Plants use sunlight, water, and carbon dioxide to make food through photosynthesis.','A fair experiment changes one factor at a time where possible.','Write down observations before drawing conclusions.']},
+{id:'digital',icon:'💻',name:'Digital skills',desc:'Internet and computer basics',intro:'Learn to use digital tools safely and confidently.',body:['Use a strong, unique password and never share verification codes.','Check the source and date before trusting online information.','Practise typing, file management, and safe web searching.']},
+{id:'business',icon:'💡',name:'Business skills',desc:'Ideas, planning and budgeting',intro:'Turn ideas into practical plans.',body:['Describe the problem your idea solves.','List start-up costs, selling price, and expected expenses.','Do not promise profits: test an idea on a small scale and keep clear records.']},
+{id:'geography',icon:'🌋',name:'Geography',desc:'People, places and environment',intro:'Understand the world around you.',body:['A map uses symbols and a scale to represent places.','Climate describes long-term weather patterns; weather changes day to day.','Explore how people can protect local forests, lakes, and wildlife.']},
+{id:'history',icon:'📜',name:'History',desc:'People, events and change',intro:'Study the past using evidence.',body:['Compare more than one reliable source when researching an event.','Separate a source’s factual claims from opinions.','Build a timeline to understand the order of events.']},
+{id:'tourism',icon:'🧭',name:'Tourism',desc:'Culture, hospitality and destinations',intro:'Discover tourism and responsible travel.',body:['Tourism involves visitors, destinations, transport, accommodation, and activities.','Responsible tourism respects local communities, culture, and the environment.','Burundi learning example: Lake Tanganyika and Gishora are cultural and natural points of interest.']},
+{id:'entrepreneurship',icon:'🚀',name:'Entrepreneurship',desc:'Create and test useful ideas',intro:'Learn to plan and improve a project.',body:['Identify a real need before choosing a product or service.','Ask potential users for feedback and improve your idea.','Track expenses and income honestly.']}
+];
+let opened=Number(localStorage.getItem('sa_opened')||0),points=Number(localStorage.getItem('sa_points')||0),qIndex=0,answered=false;
+const quiz=[
+{q:'Which sentence is a natural way to introduce yourself?',opts:['I name is Alex.','My name is Alex.','Me name Alex.'],a:1,why:'“My name is Alex” is a correct, natural introduction.'},
+{q:'What is 15% of 200?',opts:['15','30','45'],a:1,why:'10% of 200 is 20 and 5% is 10, so 15% is 30.'},
+{q:'What does “Asante” mean in Kiswahili?',opts:['Goodbye','Please','Thank you'],a:2,why:'“Asante” means “Thank you”.'},
+{q:'Which is a good way to check online information?',opts:['Share it immediately','Check the source and date','Trust every headline'],a:1,why:'Check the source, date, and evidence before sharing.'},
+{q:'What should responsible tourism respect?',opts:['Only tourists','Local communities and the environment','Nothing but profit'],a:1,why:'Responsible tourism respects people, culture, and nature.'}
+];
+function renderSubjects(filter=''){let g=document.getElementById('subjectGrid');g.innerHTML='';let list=subjects.filter(s=>(s.name+' '+s.desc).toLowerCase().includes(filter.toLowerCase()));list.forEach(s=>{let b=document.createElement('button');b.className='tile';b.innerHTML=`<div class="emoji">${s.icon}</div><h4>${s.name}</h4><p>${s.desc}</p>`;b.onclick=()=>openLesson(s.id);g.appendChild(b)});document.getElementById('lessonCount').textContent=subjects.length}
+function hidePages(){['home','lessonPage','quizPage','profilePage','aboutPage'].forEach(id=>document.getElementById(id).classList.add('hidden'))}
+function goHome(){hidePages();document.getElementById('home').classList.remove('hidden')}
+function openLesson(id){let s=subjects.find(x=>x.id===id);if(!s)return;hidePages();document.getElementById('lessonPage').classList.remove('hidden');document.getElementById('lessonEmoji').textContent=s.icon;document.getElementById('lessonTitle').textContent=s.name;document.getElementById('lessonIntro').textContent=s.intro;let body=document.getElementById('lessonBody');body.innerHTML='';s.body.forEach(t=>{let p=document.createElement('p');p.textContent=t;body.appendChild(p)});opened++;localStorage.setItem('sa_opened',opened);updateStats()}
+function showQuiz(){hidePages();document.getElementById('quizPage').classList.remove('hidden');qIndex=0;renderQuiz()}
+function startQuiz(){showQuiz()}
+function renderQuiz(){answered=false;let q=quiz[qIndex];document.getElementById('questionText').textContent=`Question ${qIndex+1} of ${quiz.length}: ${q.q}`;let c=document.getElementById('choices');c.innerHTML='';q.opts.forEach((o,i)=>{let b=document.createElement('button');b.className='choice';b.textContent=o;b.onclick=()=>answer(i,b);c.appendChild(b)});document.getElementById('feedback').textContent='';document.getElementById('nextQuestion').classList.add('hidden');document.getElementById('nextQuestion').textContent=qIndex===quiz.length-1?'Finish quiz':'Next question'}
+function answer(i,b){if(answered)return;answered=true;let q=quiz[qIndex];[...document.querySelectorAll('.choice')].forEach((el,j)=>{el.disabled=true;if(j===q.a)el.classList.add('correct')});if(i===q.a){points+=1;localStorage.setItem('sa_points',points);document.getElementById('feedback').textContent='Correct! '+q.why}else{b.classList.add('wrong');document.getElementById('feedback').textContent='Not quite. '+q.why}updateStats();document.getElementById('nextQuestion').classList.remove('hidden')}
+function nextQuiz(){if(qIndex<quiz.length-1){qIndex++;renderQuiz()}else{document.getElementById('questionText').textContent='Practice complete! Keep learning a little every day.';document.getElementById('choices').innerHTML='';document.getElementById('feedback').textContent='Your total points: '+points;document.getElementById('nextQuestion').classList.add('hidden')}}
+function showProfile(){hidePages();document.getElementById('profilePage').classList.remove('hidden');document.getElementById('learnerName').value=localStorage.getItem('sa_name')||'';document.getElementById('profileDone').textContent=opened;document.getElementById('profilePoints').textContent=points}
+function saveProfile(){let n=document.getElementById('learnerName').value.trim();localStorage.setItem('sa_name',n);document.getElementById('profileMessage').textContent=n?'Profile saved on this device.':'You can add your name whenever you are ready.'}
+function showAbout(){hidePages();document.getElementById('aboutPage').classList.remove('hidden')}
+function updateStats(){document.getElementById('quizScore').textContent=points;document.getElementById('doneCount').textContent=opened}
+document.getElementById('search').addEventListener('input',e=>{goHome();renderSubjects(e.target.value)});
+renderSubjects();updateStats();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+</script>
+</body></html>

@@ -1,0 +1,17 @@
+{
+  "name": "Study All \u2014 Learn Anything",
+  "short_name": "Study All",
+  "description": "Explore subjects, practise skills, and track learning progress.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3f6fb",
+  "theme_color": "#123c73",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
